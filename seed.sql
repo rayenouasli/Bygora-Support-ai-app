@@ -44,6 +44,7 @@ CREATE TABLE messages (
 -- We experienced a strange issue with this but usually its not necessary to do this.
 
 -- Create the trigger function to set created_at
+
 CREATE OR REPLACE FUNCTION set_created_at()
 RETURNS TRIGGER AS $$
 BEGIN
