@@ -1,8 +1,11 @@
 import Avatar from "@/components/Avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@apollo/client";
 
 function CreateChatbot() {
+
+  const [chatbotName] = useMutation()
   return (
     <div className="flex flex-col items-center justify-center md:flex-row md:space-x-10 bg-white p-10 rounded-md m-10">
         <Avatar seed="create-chatbot" />
@@ -20,6 +23,7 @@ function CreateChatbot() {
                 />
                 <Button>Create Chatbot</Button>
             </form>
+              <p className="text-gray-300 mt-5">Example : Customer Support Chatbot</p>
         </div>
         
     </div>
