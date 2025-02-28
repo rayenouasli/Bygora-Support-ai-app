@@ -2,14 +2,19 @@ import { serverClient } from "@/lib/server/serverClient";
 import { NextRequest, NextResponse } from "next/server";
 import { gql } from "@apollo/client";
 
+export const dynamic = "force-dynamic";
+
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
   
-export async function POST(request:NextRequest){
-    const {query , variables} = await request.json();
+export async function POST(request: NextRequest){
+    const {query ,variables} = await request.json();
+
+    console.log("DEBUG",query);
+    console.log("DEBUG2",variables);
 
     try {
        let result;
@@ -32,9 +37,7 @@ export async function POST(request:NextRequest){
         }
         const data = result.data;
         return NextResponse.json(
-            {
-                data,
-            },
+            { data },
             {
                 headers: corsHeaders
             }
