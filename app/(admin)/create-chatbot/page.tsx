@@ -1,11 +1,11 @@
-"useClient"
+"use client";
 import Avatar from "@/components/Avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CREATE_CHATBOT } from "@/graphql/mutations/mutations";
 import { useMutation } from "@apollo/client";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 
 function CreateChatbot() {
