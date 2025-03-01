@@ -13,9 +13,6 @@ const corsHeaders = {
 export async function POST(request: NextRequest){
     const {query ,variables} = await request.json();
 
-    console.log("DEBUG",query);
-    console.log("DEBUG2",variables);
-
     try {
        let result;
 
