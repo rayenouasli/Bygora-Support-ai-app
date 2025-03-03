@@ -4,6 +4,9 @@ import { BASE_URL } from "@/graphql/Apolloclient";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
 
 function EditChatbot() {
   const params = useParams(); // Use useParams() to access params properly
@@ -26,10 +29,22 @@ function EditChatbot() {
           Share this link with your customers to start conversations with your
           chatbot
         </p>
-        <div className="flex items-center space-x-2 bg-white md:rounded-lg">
-          <Link href={url} className="w-full cursor-pointer hover:opacity-50">
-            <Input value={url} readOnly className="cursor-pointer" />
+        <div className="flex items-center space-x-2">
+          <Link href={url} className="w-full cursor-pointer hover:opacity-50 bg-white md:rounded-lg">
+            <Input value={url} readOnly className="cursor-pointer"/>
           </Link>
+          <Button
+          type="submit"
+          size="sm"
+          className="px-3"
+          onClick={()=>{
+            navigator.clipboard.writeText(url);
+              toast.success("Copied to clipboard");
+          }}
+          >
+            <span className="sr-only">Copy</span>
+            <Copy className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
