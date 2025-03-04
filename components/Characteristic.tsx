@@ -15,25 +15,29 @@ function Characteristic({
     refetchQueries: ["GetChatbotById"],
   });
 
-  const handleRemoveCharacteristic = async () => {
+  const handleRemoveCharacteristic = async (characteristicId: number) => {
     try {
       await removeCharacteristic({
         variables: {
-          id: characteristic.id,
+          id: characteristicId,
         },
       });
     } catch (error) {
-      console.error(error);
+      console.error("failed to remove characteristic:", error);
     }
   };
 
   return (
-    <li className="relative p-10 bg-white border rounded-md">
+    <li
+      key={characteristic.id}
+      className="relative p-10 bg-white border rounded-md"
+    >
       {characteristic.content}
+
       <OctagonX
         className="w-6 h-6 text-white fill-red-500 absolute top-1 right-1 cursor-pointer hover:opacity-50"
         onClick={() => {
-          const promise = handleRemoveCharacteristic();
+          const promise = handleRemoveCharacteristic(characteristic.id);
           toast.promise(promise, {
             loading: "Removing ...",
             success: "Characteristic removed !",

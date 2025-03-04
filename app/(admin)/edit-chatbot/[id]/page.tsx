@@ -3,15 +3,20 @@ import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/graphql/Apolloclient";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Copy } from "lucide-react";
+import { Copy, X } from "lucide-react";
 import { toast } from "sonner";
 import { useMutation, useQuery } from "@apollo/client";
 import { GetChatbotByIdResponse, GetChatbotByIdVariables } from "@/types/types";
 import { GET_CHATBOT_BY_ID } from "@/graphql/queries/queries";
 import Avatar from "@/components/Avatar";
 import Characteristic from "@/components/Characteristic";
+import {
+  ADD_CHARACTERISTIC,
+  DELETE_CHATBOT,
+  UPDATE_CHATBOT,
+} from "@/graphql/mutations/mutations";
 
 function EditChatbot() {
   const params = useParams(); // Get params properly
@@ -20,6 +25,18 @@ function EditChatbot() {
   const [url, setUrl] = useState<string>("");
   const [chatbotName, setChatbotName] = useState<string>("");
   const [newCharacteristic, setNewCharacteristic] = useState<string>("");
+  const [deleteChatbot] = useMutation(DELETE_CHATBOT, {
+    refetchQueries: ["GetChatbotById"], //refetch the chatbot after deleting
+    awaitRefetchQueries: true,
+  });
+
+  const [addCharacteristic] = useMutation(ADD_CHARACTERISTIC, {
+    refetchQueries: ["GetChatbotById"],
+  });
+
+  const [updateChatbot] = useMutation(UPDATE_CHATBOT, {
+    refetchQueries: ["GetChatbotById"],
+  });
 
   const { data, loading, error } = useQuery<
     GetChatbotByIdResponse,
@@ -40,6 +57,73 @@ function EditChatbot() {
       setUrl(`${BASE_URL}/chatbot/${id}`);
     }
   }, [id]);
+
+  const handleAddCharacteristic = async (content: string) => {
+    try {
+      const promise = addCharacteristic({
+        variables: {
+          chatbotId: Number(id),
+          content,
+        },
+      });
+
+      toast.promise(promise, {
+        loading: "Adding ...",
+        success: "Information Added !",
+        error: "Failed to add information",
+      });
+    } catch (err) {
+      console.error("Failed to add characteristic:", err);
+    }
+  };
+
+  const handleUpdateChatbot = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const promise = updateChatbot({
+        variables: {
+          id,
+          name: chatbotName,
+        },
+      });
+      toast.promise(promise, {
+        loading: "Updating ...",
+        success: "Chatbot successfully updated",
+        error: "Failed to update chatbot",
+      });
+    } catch (err) {
+      console.error("failed to update:", err);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to delete this chatbot?"
+    );
+    if (!isConfirmed) return;
+    try {
+      const promise = deleteChatbot({ variables: { id } });
+      toast.promise(promise, {
+        loading: "Deleting...",
+        success: "Chatbot successfully deleted !",
+        error: "Failed to delete Chatbot",
+      });
+    } catch (error) {
+      console.error("Error deleting chatbot :", error);
+      toast.error("Failed to delete chatbot");
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="mx-auto animate-spin p-10">
+        <Avatar seed="PAPAFAM Support Agent" />
+      </div>
+    );
+
+  if (error) return <p>Error: {error.message}</p>;
+
+  if (!data?.chatbots) return redirect("/view-chatbots");
 
   return (
     <div className="px-0 md:p-10">
@@ -75,13 +159,15 @@ function EditChatbot() {
         <Button
           variant="destructive"
           className="absolute top-2 right-2 h-8 w-2"
+          onClick={() => handleDelete(id)}
         >
           X
         </Button>
+
         <div className="flex space-x-4">
           <Avatar seed={chatbotName} />
           <form
-            //onSubmit={handleUpdateChatbot}
+            onSubmit={handleUpdateChatbot}
             className="flex flex-1 space-x-2 items-center"
           >
             <Input
@@ -102,10 +188,18 @@ function EditChatbot() {
           in your conversations with your customers & users
         </p>
 
-        <div>
-          <form>
+        <div className="bg-gray-200 p-5 rounded-md mt-5">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleAddCharacteristic(newCharacteristic);
+              setNewCharacteristic("");
+            }}
+            className="flex space-x-2 mb-5"
+          >
             <Input
               type="text"
+              className="bg-white rounded-md"
               placeholder="Example : If customer asks for price , provide pricing page : www.example.com/pricing"
               value={newCharacteristic}
               onChange={(e) => setNewCharacteristic(e.target.value)}
@@ -116,7 +210,7 @@ function EditChatbot() {
           </form>
 
           <ul className="flex flex-wrap-reverse">
-            {data?.chatbots.chatbot_characteristics.map((characteristic) => (
+            {data?.chatbots?.chatbot_characteristics?.map((characteristic) => (
               <Characteristic
                 key={characteristic.id}
                 characteristic={characteristic}
