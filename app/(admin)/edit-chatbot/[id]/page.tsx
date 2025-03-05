@@ -142,7 +142,10 @@ function EditChatBot() {
           chatbot
         </p>
         <div className="flex items-center space-x-2">
-          <Link href={url} className="w-full cursor-pointer hover:opacity-50">
+          <Link
+            href={url}
+            className="w-full cursor-pointer hover:opacity-50 bg-white rounded-md"
+          >
             <Input value={url} readOnly className="cursor-pointer" />
           </Link>
           <Button
@@ -189,7 +192,9 @@ function EditChatBot() {
           </form>
         </div>
 
-        <h2 className="text-xl font-bold mt-10">Here's what your AI knows...</h2>
+        <h2 className="text-xl font-bold mt-10">
+          Here's what your AI knows...
+        </h2>
         <p>
           Your chatbot is equipped with the following information to assist you
           in your conversations with your customers & users
@@ -206,6 +211,7 @@ function EditChatBot() {
           >
             <Input
               type="text"
+              className="bg-white rounded-md"
               placeholder="Example: If customer asks for prices, provide pricing page: www.example.com/pricing"
               value={newCharacteristic}
               onChange={(e) => setNewCharacteristic(e.target.value)}
