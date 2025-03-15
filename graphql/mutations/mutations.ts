@@ -9,18 +9,13 @@ export const CREATE_CHATBOT = gql`
   }
 `;
 
-export const REMOVE_CHARACTERISTIC = gql`
-  mutation RemoveCharacteristic($characteristicId: Int!) {
-    deleteChatbot_characteristics(id: $characteristicId) {
+export const UPDATE_CHATBOT = gql`
+  mutation UpdateChatbot($id: Int!, $name: String!) {
+    updateChatbots(id: $id, name: $name) {
       id
-    }
-  }
-`;
-
-export const DELETE_CHATBOT = gql`
-  mutation DeleteChatbot($id: Int!) {
-    deleteChatbots(id: $id) {
-      id
+      name
+      created_at
+      # Add other fields you might want to return after update
     }
   }
 `;
@@ -31,16 +26,59 @@ export const ADD_CHARACTERISTIC = gql`
       id
       content
       created_at
+      # Add other fields you might want to return after adding
     }
   }
 `;
 
-export const UPDATE_CHATBOT = gql`
-  mutation UpdateChatbot($id: Int!, $name: String!) {
-    updateChatbots(id: $id, name: $name) {
+export const REMOVE_CHARACTERISTIC = gql`
+  mutation RemoveCharacteristic($characteristicId: Int!) {
+    deleteChatbot_characteristics(id: $characteristicId) {
       id
-      name
+      # Add other fields you might want to return after removal
+    }
+  }
+`;
+
+export const INSERT_GUEST = gql`
+  mutation InsertGuest($name: String!, $email: String!) {
+    insertGuests(name: $name, email: $email) {
+      id
+    }
+  }
+`;
+
+export const INSERT_CHAT_SESSION = gql`
+  mutation InsertChatSession($chatbot_id: Int!, $guest_id: Int!) {
+    insertChat_sessions(chatbot_id: $chatbot_id, guest_id: $guest_id) {
+      id
+    }
+  }
+`;
+
+export const INSERT_MESSAGE = gql`
+  mutation InsertMessage(
+    $chat_session_id: Int!
+    $content: String!
+    $sender: String!
+  ) {
+    insertMessages(
+      chat_session_id: $chat_session_id
+      content: $content
+      sender: $sender
+    ) {
+      id
+      content
       created_at
+      sender
+    }
+  }
+`;
+
+export const DELETE_CHATBOT = gql`
+  mutation DeleteChatbot($id: Int!) {
+    deleteChatbots(id: $id) {
+      id
     }
   }
 `;
