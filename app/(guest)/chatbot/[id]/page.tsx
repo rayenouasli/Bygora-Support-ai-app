@@ -87,80 +87,6 @@ function ChatbotPage({ params }: { params: Promise<{ id: string }> }) {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    setLoading(true);
-    const { message: formMessage } = values;
-
-    const message = formMessage;
-    form.reset();
-
-    if (!name || !email) {
-      setIsOpen(true);
-      setLoading(false);
-      return;
-    }
-
-    // Handle message flow here...
-    if (!message.trim()) {
-      return; // Do not submit if the message is empty
-    }
-
-    // Optimistically update the UI with the user's message
-    const userMessage: Message = {
-      id: Date.now(),
-      content: message,
-      created_at: new Date().toISOString(),
-      chat_session_id: chatId,
-      sender: "user",
-    };
-
-    // ...And show loading state for AI response
-    const loadingMessage: Message = {
-      id: Date.now() + 1,
-      content: "Thinking...",
-      created_at: new Date().toISOString(),
-      chat_session_id: chatId,
-      sender: "ai",
-    };
-
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      userMessage,
-      loadingMessage,
-    ]);
-
-    try {
-      const response = await fetch("/api/send-message", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name,
-          chat_session_id: chatId,
-          chatbot_id: id,
-          content: message,
-        }),
-      });
-
-      const result = await response.json();
-      console.log(result);
-
-      // Update the AI response
-      setMessages((prevMessages) =>
-        prevMessages.map((msg) =>
-          msg.id === loadingMessage.id
-            ? { ...msg, content: result.content, id: result.id }
-            : msg
-        )
-      );
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  }
-
   const handleInformationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -171,6 +97,76 @@ function ChatbotPage({ params }: { params: Promise<{ id: string }> }) {
     setLoading(false);
     setIsOpen(false);
   };
+
+   async function onSubmit(values:z.infer<typeof formSchema>){
+    setLoading(true);
+    const { message: formMessage} = values;
+
+    const message = formMessage;
+    form.reset();
+
+    if(!name || !email){
+      setIsOpen(true);
+      setLoading(false);
+      return ;
+    } 
+    // Handle message flow here...
+     if (!message.trim()){
+      return ; //Do not submit if the message is empty
+     }
+
+     const userMessage: Message ={
+      id: Date.now(),
+      content: message,
+      created_at: new Date().toISOString(),
+      chat_session_id: chatId,
+      sender: "user" ,
+     };
+
+     const loadingMessage: Message = {
+      id: Date.now() +1,
+      content : "Thinking...",
+      created_at: new Date().toISOString(),
+      chat_session_id: chatId,
+      sender: "ai",
+     };
+
+     setMessages((prevMessages)=>[
+      ...prevMessages,
+      userMessage,
+      loadingMessage
+     ]);
+
+     try {
+       const response = await fetch("/api/send-message",{
+        method : "POST",
+        headers: {
+          "Content-Type" : "application/json",
+        },
+        body : JSON.stringify({
+          name : name,
+          chat_session_id : chatId,
+          chatbot_id: id,
+          content: message,
+        }),
+       });
+
+       const result = await response.json();
+
+       //Update the loading message for the AI with the actual response
+
+       setMessages((prevMessages)=>
+        prevMessages.map((msg)=>
+        msg.id === loadingMessage.id
+      ? {...msg, content: result.content, id: result.id}
+      :msg
+      )
+       );      
+     } catch (error) {
+      console.error("Error sending message:", error);
+     }
+
+   }
 
   return (
     <div className="w-full flex bg-gray-100">
@@ -260,7 +256,10 @@ function ChatbotPage({ params }: { params: Promise<{ id: string }> }) {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="h-full">
+            <Button type="submit"
+                className="h-full"
+                disabled={form.formState.isSubmitting || !form.formState.isValid}
+             >
               Send
             </Button>
           </form>
