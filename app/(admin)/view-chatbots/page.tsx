@@ -6,8 +6,8 @@ import { GET_CHATBOTS_BY_USER } from "@/graphql/queries/queries";
 import { serverClient } from "@/lib/server/serverClient";
 import {
   Chatbot,
-  GetChatbotByUserData,
-  GetChatbotByUserDataVariables,
+  GetChatbotsByUserData,
+  GetChatbotsByUserDataVariables,
 } from "@/types/types";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
@@ -21,8 +21,8 @@ async function ViewChatbots() {
   const {
     data: { chatbotsByUser },
   } = await serverClient.query<
-    GetChatbotByUserData,
-    GetChatbotByUserDataVariables
+    GetChatbotsByUserData,
+    GetChatbotsByUserDataVariables
   >({
     query: GET_CHATBOTS_BY_USER,
     variables: { clerk_user_id: userId },

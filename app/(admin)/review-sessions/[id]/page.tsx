@@ -22,7 +22,7 @@ async function ReviewSession({ params : {id}} : {params : {id:string}}) {
     GetChatSessionMessagesVariables
     > ({
         query : GET_CHAT_SESSION_MESSAGES,
-        variables: {id : parseInt(id as string)},
+        variables: { id: parseInt(id as string)},
     });
     return (
         <div className="flex-1 p-10 pb-24">

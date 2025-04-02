@@ -8,7 +8,7 @@ function Header() {
       <Link href="/" className="flex items-center text-4xl font-thin">
         <Avatar seed="PAPAFAM Support Agent" />
         <div className="space-y-1">
-          <h1>Assistly</h1>
+          <h1>Bygora Bot</h1>
           <h2 className="text-sm">Your Customisable AI Chat Agent</h2>
         </div>
       </Link>
